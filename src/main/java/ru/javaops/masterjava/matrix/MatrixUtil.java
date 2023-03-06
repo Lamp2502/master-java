@@ -13,29 +13,26 @@ public class MatrixUtil {
 
     // TODO implement parallel multiplication matrixA*matrixB
     public static int[][] concurrentMultiply(int[][] matrixA, int[][] matrixB, ExecutorService executor) throws InterruptedException, ExecutionException {
-        final int matrixSize = matrixA.length;
-        final int[][] matrixC = new int[matrixSize][matrixSize];
-        int[] columnB = new int[matrixSize];
-
-        Callable<int[][]> task = () -> getMultipliedMatrix(matrixA, matrixB, matrixSize, matrixC, columnB);
-
+        Callable<int[][]> task = () -> getMultipliedMatrix(matrixA, matrixB);
         return executor.submit(task).get();
     }
 
     // TODO optimize by https://habrahabr.ru/post/114797/
     public static int[][] singleThreadMultiply(int[][] matrixA, int[][] matrixB) {
-        final int matrixSize = matrixA.length;
-        final int[][] matrixC = new int[matrixSize][matrixSize];
-        int[] columnB = new int[matrixSize];
 
-        return getMultipliedMatrix(matrixA, matrixB, matrixSize, matrixC, columnB);
+
+        return getMultipliedMatrix(matrixA, matrixB);
     }
 
-    private static int[][] getMultipliedMatrix(int[][] matrixA, int[][] matrixB, int matrixSize, int[][] matrixC, int[] columnB) {
-        try {
+    private static int[][] getMultipliedMatrix(int[][] matrixA, int[][] matrixB) {
+        final int matrixSize = matrixA.length;
+        final int[][] matrixC = new int[matrixSize][matrixSize];
+
             for (int i = 0; i < matrixSize; i++) {
+                final int[] columnB = new int[matrixSize];
                 for (int j = 0; j < matrixSize; j++) {
                     System.arraycopy(matrixB[j], 0, columnB, 0, matrixSize);
+                    columnB[j] = matrixB[j][i];
                 }
 
                 for (int k = 0; k < matrixSize; k++) {
@@ -47,7 +44,6 @@ public class MatrixUtil {
                     matrixC[k][i] = sum;
                 }
             }
-        } catch (IndexOutOfBoundsException ignored) { }
         return matrixC;
     }
 
