@@ -24,7 +24,7 @@ public class MatrixBenchmark {
     // Matrix size
     private static final int MATRIX_SIZE = 1000;
 
-    @Param({"3", "4", "10", "15"})
+    @Param({"5", "10", "15"})
     private int threadNumber;
 
     private static int[][] matrixA;
